@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  python:
+    name: Тести Python (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Встановити pytest
+        run: python -m pip install "pytest>=8,<10"
+      - name: Контрольні приклади
+        run: python run.py selftest
+      - name: Перевірки алгоритмів і результатів
+        run: python -m pytest -q
